@@ -1,0 +1,55 @@
+# Весь проект одной командой: docker compose up --build
+# Только база для разработки:  docker compose up -d db
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: classic
+      POSTGRES_PASSWORD: classic
+      POSTGRES_DB: classic
+    # снаружи 5440, чтобы не мешать PostgreSQL, установленному на компьютере
+    ports:
+      - "5440:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U classic"]
+      interval: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      PORT: 4000
+      CORS_ORIGIN: http://localhost:3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: classic
+      DB_PASSWORD: classic
+      DB_NAME: classic
+      DB_SYNC: "true"
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-string}
+      SEED_ADMIN_EMAIL: admin@classic.local
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-admin12345}
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # адрес API, который видит браузер гостя
+        NEXT_PUBLIC_API_URL: http://localhost:4000/api
+    environment:
+      # адрес API изнутри Docker-сети (для серверного рендеринга)
+      API_URL: http://backend:4000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

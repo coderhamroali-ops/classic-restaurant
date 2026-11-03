@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "classic-api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "backend", "run", "start:dev"],
+      "port": 4000,
+      "autoPort": false
+    },
+    {
+      "name": "classic-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "frontend", "run", "dev"],
+      "port": 3000,
+      "autoPort": false
+    }
+  ]
+}
