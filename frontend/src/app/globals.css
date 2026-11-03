@@ -33,7 +33,8 @@ body { background: var(--color-ink); color: var(--color-ivory); font-family: var
   --serif: var(--font-serif); --sans: var(--font-sans);
   --wrap: min(1180px, 100% - 32px);
 
-  background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; font-size: 17px; line-height: 1.7; overflow-x: hidden;
+  /* clip, а не hidden: hidden делает .site контейнером прокрутки и ломает position: sticky у витрины меню */
+  background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 300; font-size: 17px; line-height: 1.7; overflow-x: clip;
 
   a { color: inherit; text-decoration: none; }
   :focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
